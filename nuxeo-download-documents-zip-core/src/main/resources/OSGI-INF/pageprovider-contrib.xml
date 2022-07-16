@@ -1,0 +1,12 @@
+<component name="org.nuxeo.labs.download.zip.pp">
+
+    <extension point="providers" target="org.nuxeo.ecm.platform.query.api.PageProviderService">
+        <coreQueryPageProvider name="zip_folder_get_children">
+            <pattern escapeParameters="true" quoteParameters="false">
+                Select * From Document Where ecm:ancestorId='?' AND ecm:mixinType NOT IN ('HiddenInNavigation')  AND ecm:isVersion = 0 AND ecm:isTrashed = 0
+            </pattern>
+            <pageSize>10</pageSize>
+        </coreQueryPageProvider>
+    </extension>
+
+</component>
