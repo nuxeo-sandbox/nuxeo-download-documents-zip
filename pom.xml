@@ -23,6 +23,7 @@
   <modules>
     <module>nuxeo-download-documents-zip-core</module>
     <module>nuxeo-download-documents-zip-package</module>
+    <module>nuxeo-download-documents-zip-webui</module>
   </modules>
 
   <scm />
@@ -38,6 +39,11 @@
       <dependency>
         <groupId>org.nuxeo.labs.download.zip</groupId>
         <artifactId>nuxeo-download-documents-zip-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nuxeo.labs.download.zip</groupId>
+        <artifactId>nuxeo-download-documents-zip-webui</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -1,0 +1,47 @@
+<!--
+@license
+(C) Copyright Nuxeo Corp. (http://nuxeo.com/)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<link rel="import" href="actions/nuxeo-labs-download-documents-button.html">
+
+<nuxeo-slot-content name="downloadSelectionAction" slot="COLLECTION_ACTIONS" order="15" priority="10">
+    <template>
+        <nuxeo-labs-download-documents-button documents="[[selection]]"> </nuxeo-labs-download-documents-button>
+    </template>
+</nuxeo-slot-content>
+
+<nuxeo-slot-content name="downloadDocumentAction" slot="DOCUMENT_ACTIONS" order="90" priority="10">
+    <template>
+        <nuxeo-filter
+                document="[[document]]"
+                expression="(document.facets.indexOf('Folderish') !== -1
+                                                   || document.facets.indexOf('Collection') !== -1)
+                                                   && document.contextParameters
+                                                   && document.contextParameters.hasContent">
+            <template>
+                <nuxeo-labs-download-documents-button document="[[document]]"> </nuxeo-labs-download-documents-button>
+            </template>
+        </nuxeo-filter>
+    </template>
+</nuxeo-slot-content>
+
+<nuxeo-slot-content name="downloadSelectionAction" slot="RESULTS_SELECTION_ACTIONS" order="5" priority="10">
+    <template>
+        <nuxeo-labs-download-documents-button documents="[[selection]]"> </nuxeo-labs-download-documents-button>
+    </template>
+</nuxeo-slot-content>
+
+
