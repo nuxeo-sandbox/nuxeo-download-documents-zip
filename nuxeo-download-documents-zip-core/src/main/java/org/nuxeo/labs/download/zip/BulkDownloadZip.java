@@ -68,7 +68,7 @@ public class BulkDownloadZip {
             docs.stream().forEach(doc -> {
                 try {
                     if (doc.isFolder()) {
-                        zipFolder(zipOut, doc, pageprovider);
+                        zipFolder(zipOut, doc, "", pageprovider);
                     } else {
                         zipFile(zipOut, doc, null);
                     }
@@ -84,11 +84,11 @@ public class BulkDownloadZip {
                 : String.format("BlobListZip-%s-%s", UUID.randomUUID(), session.getPrincipal().getName());
 
         FileBlob result = new FileBlob(zipFile, "application/zip", null, filename, null);
-        Framework.trackFile(zipFile,result);
+        Framework.trackFile(zipFile, result);
         return result;
     }
 
-    public void zipFolder(ZipArchiveOutputStream zipOut, DocumentModel root, String pageproviderName)
+    public void zipFolder(ZipArchiveOutputStream zipOut, DocumentModel root, String path, String pageproviderName)
             throws IOException {
         PageProviderService pageProviderService = Framework.getService(PageProviderService.class);
         Map<String, Serializable> props = new HashMap<>();
@@ -96,37 +96,42 @@ public class BulkDownloadZip {
         @SuppressWarnings("unchecked")
         PageProvider<DocumentModel> pp = (PageProvider<DocumentModel>) pageProviderService.getPageProvider(
                 pageproviderName, null, null, null, null, props, new Object[] { root.getId() });
+        String currentPath = String.format("%s/%s", path, root.getPropertyValue("dc:title"));
         do {
             List<DocumentModel> children = pp.getCurrentPage();
             for (DocumentModel current : children) {
                 if (current.isFolder()) {
-                    continue;
+                    zipFolder(zipOut, current, currentPath, pageproviderName);
+                } else {
+                    zipFile(zipOut, current, currentPath);
                 }
-                zipFile(zipOut, current, null);
             }
             pp.nextPage();
         } while (pp.isNextEntryAvailable());
     }
 
     public void zipFile(ZipArchiveOutputStream zipOut, DocumentModel current, String path) throws IOException {
-        Blob blob = current.getAdapter(BlobHolder.class).getBlob();
-        if (blob != null) {
-            if (!downloadService.checkPermission(current, null, blob, DOWNLOAD_REASON, Collections.emptyMap())) {
-                log.debug("Not allowed to download blob for document {}", current::getPathAsString);
-                return;
-            }
-            downloadService.logDownload(null, current, null, blob.getFilename(), DOWNLOAD_REASON, null);
+        BlobHolder blobHolder = current.getAdapter(BlobHolder.class);
+        if (blobHolder == null || blobHolder.getBlob() == null) {
+            log.debug("No blob for document {}", current::getPathAsString);
+            return;
+        }
+        Blob blob = blobHolder.getBlob();
+        if (!downloadService.checkPermission(current, null, blob, DOWNLOAD_REASON, Collections.emptyMap())) {
+            log.debug("Not allowed to download blob for document {}", current::getPathAsString);
+            return;
+        }
+        downloadService.logDownload(null, current, null, blob.getFilename(), DOWNLOAD_REASON, null);
 
-            String entryPath = path != null && path.length() > 0 ? path + "/" + blob.getFilename() : blob.getFilename();
-            if (entryPath.startsWith("/")) {
-                entryPath = entryPath.substring(1);
-            }
-            try (InputStream in = blob.getStream()) {
-                ArchiveEntry entry = new ZipArchiveEntry(entryPath);
-                zipOut.putArchiveEntry(entry);
-                IOUtils.copy(in, zipOut);
-                zipOut.closeArchiveEntry();
-            }
+        String entryPath = StringUtils.isNotBlank(path) ? path + "/" + blob.getFilename() : blob.getFilename();
+        if (entryPath.startsWith("/")) {
+            entryPath = entryPath.substring(1);
+        }
+        try (InputStream in = blob.getStream()) {
+            ArchiveEntry entry = new ZipArchiveEntry(entryPath);
+            zipOut.putArchiveEntry(entry);
+            IOUtils.copy(in, zipOut);
+            zipOut.closeArchiveEntry();
         }
     }
 
