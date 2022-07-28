@@ -26,6 +26,7 @@ import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.io.download.DownloadService;
@@ -58,12 +59,25 @@ public class BulkDownloadZip {
     @Param(name = "pageprovider", required = false)
     protected String pageprovider = "zip_folder_get_children";
 
+    @Param(name = "zipMethod", description = "Zip compression method, either deflated or stored (default)", required = false)
+    protected String zipMethod = "stored";
+
     @OperationMethod
     public Blob run(DocumentModelList docs) throws IOException {
         File zipFile = Framework.createTempFile("zip", null);
         long beginning = System.currentTimeMillis();
         try (ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(zipFile)) {
-            zipOut.setMethod(ZipArchiveOutputStream.STORED);
+            switch (zipMethod) {
+            case "stored":
+                zipOut.setMethod(ZipArchiveOutputStream.STORED);
+                break;
+            case "deflated":
+                zipOut.setMethod(ZipArchiveOutputStream.DEFLATED);
+                break;
+            default:
+                throw new NuxeoException("Unknow ZIP method: " + zipMethod);
+            }
+
             zipOut.setUseZip64(Zip64Mode.Always);
             docs.stream().forEach(doc -> {
                 try {
@@ -90,13 +104,17 @@ public class BulkDownloadZip {
 
     public void zipFolder(ZipArchiveOutputStream zipOut, DocumentModel root, String path, String pageproviderName)
             throws IOException {
+        String rootTitle = (String) root.getPropertyValue("dc:title");
+        String currentPath = String.format("%s/%s", path,
+                StringUtils.isNotBlank(rootTitle) ? rootTitle : root.getName());
+
         PageProviderService pageProviderService = Framework.getService(PageProviderService.class);
         Map<String, Serializable> props = new HashMap<>();
         props.put(CoreQueryDocumentPageProvider.CORE_SESSION_PROPERTY, (Serializable) root.getCoreSession());
         @SuppressWarnings("unchecked")
         PageProvider<DocumentModel> pp = (PageProvider<DocumentModel>) pageProviderService.getPageProvider(
                 pageproviderName, null, null, null, null, props, new Object[] { root.getId() });
-        String currentPath = String.format("%s/%s", path, root.getPropertyValue("dc:title"));
+
         do {
             List<DocumentModel> children = pp.getCurrentPage();
             for (DocumentModel current : children) {

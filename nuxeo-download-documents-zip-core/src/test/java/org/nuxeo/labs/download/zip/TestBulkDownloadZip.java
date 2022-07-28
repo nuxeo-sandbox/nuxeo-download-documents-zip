@@ -19,6 +19,7 @@ import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.DocumentModelList;
 import org.nuxeo.ecm.core.api.DocumentRef;
+import org.nuxeo.ecm.core.api.NuxeoException;
 import org.nuxeo.ecm.core.api.PathRef;
 import org.nuxeo.ecm.core.api.impl.DocumentModelListImpl;
 import org.nuxeo.ecm.core.test.annotations.Granularity;
@@ -50,10 +51,32 @@ public class TestBulkDownloadZip {
     }
 
     @Test
-    public void testZipFiles() throws OperationException {
+    public void testZipStoredFiles() throws OperationException {
         DocumentModelList files = session.getDocuments(new DocumentRef[]{new PathRef("/Test/File1"),new PathRef("/Test/File2")});
         OperationContext ctx = new OperationContext(session);
         Map<String, Object> params = new HashMap<>();
+        ctx.setInput(files);
+        Blob zip  = (Blob) automationService.run(ctx, BulkDownloadZip.ID, params);
+        assertNotNull(zip);
+    }
+
+    @Test
+    public void testZipDeflatedFiles() throws OperationException {
+        DocumentModelList files = session.getDocuments(new DocumentRef[]{new PathRef("/Test/File1"),new PathRef("/Test/File2")});
+        OperationContext ctx = new OperationContext(session);
+        Map<String, Object> params = new HashMap<>();
+        params.put("zipMethod","deflated");
+        ctx.setInput(files);
+        Blob zip  = (Blob) automationService.run(ctx, BulkDownloadZip.ID, params);
+        assertNotNull(zip);
+    }
+
+    @Test(expected = NuxeoException.class)
+    public void testZipUnknownMethod() throws OperationException {
+        DocumentModelList files = session.getDocuments(new DocumentRef[]{new PathRef("/Test/File1")});
+        OperationContext ctx = new OperationContext(session);
+        Map<String, Object> params = new HashMap<>();
+        params.put("zipMethod","banana");
         ctx.setInput(files);
         Blob zip  = (Blob) automationService.run(ctx, BulkDownloadZip.ID, params);
         assertNotNull(zip);

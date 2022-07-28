@@ -39,15 +39,26 @@ public class CustomRepoInit implements RepositoryInit {
         DocumentModel folder = session.createDocumentModel(session.getRootDocument().getPathAsString(),"Test","Folder");
         folder = session.createDocument(folder);
 
-        Blob blob1 = new FileBlob(new File(getClass().getResource("/files/GH-6572_team_lg_cap_01_CBJ.mov").getPath()));
+        Blob blob1 = new FileBlob(new File(getClass().getResource("/files/Bear.svg").getPath()));
         DocumentModel file1 = session.createDocumentModel(folder.getPathAsString(),"File1","File");
         file1.setPropertyValue("file:content", (Serializable) blob1);
-        file1 = session.createDocument(file1);
+        session.createDocument(file1);
 
-        Blob blob2 = new FileBlob(new File(getClass().getResource("/files/GH-6572_team_lg_cap_01_EDM.mov").getPath()));
+        Blob blob2 = new FileBlob(new File(getClass().getResource("/files/sample.psb").getPath()));
         DocumentModel file2 = session.createDocumentModel(folder.getPathAsString(),"File2","File");
         file2.setPropertyValue("file:content", (Serializable) blob2);
-        file2 = session.createDocument(file2);
+        session.createDocument(file2);
+
+        DocumentModel emptyDoc = session.createDocumentModel(folder.getPathAsString(),"empty","File");
+        session.createDocument(emptyDoc);
+
+        DocumentModel subfolder = session.createDocumentModel(folder.getPathAsString(),"sub","Folder");
+        subfolder = session.createDocument(subfolder);
+
+        Blob blob3 = new FileBlob(new File(getClass().getResource("/files/Brief.docx").getPath()));
+        DocumentModel file3 = session.createDocumentModel(subfolder.getPathAsString(),"File3","File");
+        file3.setPropertyValue("file:content", (Serializable) blob3);
+        session.createDocument(file3);
     }
 
 }
