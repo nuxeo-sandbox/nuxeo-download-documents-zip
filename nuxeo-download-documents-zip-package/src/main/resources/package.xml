@@ -1,10 +1,9 @@
-<!-- See documentation at http://doc.nuxeo.com/x/HgIz -->
 <package type="addon" name="nuxeo-download-documents-zip" version="@VERSION@">
-  <title>Nuxeo download documents zip</title>
+  <title>Nuxeo Bulk Download Document Zip</title>
   <description>
-    <p>Put here an HTML description of your Nuxeo Package.</p>
+    <p>A plugin that provides enhanced bulk download capabilities for the Nuxeo Platform Web UI</p>
   </description>
-  <!-- <home-page>http://doc.nuxeo.com/</home-page> -->
+  <home-page>https://github.com/nuxeo-sandbox/nuxeo-download-documents-zip</home-page>
   <vendor>Nuxeo</vendor>
   <installer restart="true" />
   <uninstaller restart="true" />
@@ -19,13 +18,13 @@
     <platform>lts-@NUXEO_TARGET_VERSION@</platform>
   </platforms>
   <!-- Dependencies on other packages -->
-  <!-- <dependencies> -->
+  <dependencies>
   <!-- <package>another-package:1.0.0:1.0.0</package> -->
   <!-- If you require JSF UI package:  -->
   <!-- <package>nuxeo-jsf-ui</package> -->
   <!-- If you require WEB UI package:  -->
-  <!-- <package>nuxeo-web-ui</package> -->
-  <!-- </dependencies> -->
+   <package>nuxeo-web-ui</package>
+  </dependencies>
   <!-- Conflicts with other packages -->
   <!-- <conflicts> -->
   <!-- <package>a-conflicting-package:1.0.0:1.0.0</package> -->
@@ -34,8 +33,8 @@
   <!-- <provides> -->
   <!-- <package>an-embedded-package:1.0.0:1.0.0</package> -->
   <!-- </provides> -->
-  <license></license>
-  <license-url></license-url>
+  <license>Apache License, Version 2.0</license>
+  <license-url>http://www.apache.org/licenses/LICENSE-2.0</license-url>
   <!-- Visibility: PRIVATE | MARKETPLACE | DEV | PUBLIC -->
-  <visibility>DEV</visibility>
+  <visibility>PUBLIC</visibility>
 </package>
