@@ -3,7 +3,6 @@ package org.nuxeo.labs.download.zip;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.nuxeo.ecm.automation.core.annotations.Context;
 import org.nuxeo.ecm.automation.core.annotations.Operation;
 import org.nuxeo.ecm.automation.core.annotations.OperationMethod;
 import org.nuxeo.ecm.automation.core.annotations.Param;
+import org.nuxeo.ecm.automation.core.util.PageProviderHelper;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
 import org.nuxeo.ecm.core.api.DocumentModel;
@@ -31,8 +31,7 @@ import org.nuxeo.ecm.core.api.blobholder.BlobHolder;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.io.download.DownloadService;
 import org.nuxeo.ecm.platform.query.api.PageProvider;
-import org.nuxeo.ecm.platform.query.api.PageProviderService;
-import org.nuxeo.ecm.platform.query.nxql.CoreQueryDocumentPageProvider;
+import org.nuxeo.ecm.platform.query.api.PageProviderDefinition;
 import org.nuxeo.runtime.api.Framework;
 
 /**
@@ -108,12 +107,10 @@ public class BulkDownloadZip {
         String currentPath = String.format("%s/%s", path,
                 StringUtils.isNotBlank(rootTitle) ? rootTitle : root.getName());
 
-        PageProviderService pageProviderService = Framework.getService(PageProviderService.class);
-        Map<String, Serializable> props = new HashMap<>();
-        props.put(CoreQueryDocumentPageProvider.CORE_SESSION_PROPERTY, (Serializable) root.getCoreSession());
-        @SuppressWarnings("unchecked")
-        PageProvider<DocumentModel> pp = (PageProvider<DocumentModel>) pageProviderService.getPageProvider(
-                pageproviderName, null, null, null, null, props, new Object[] { root.getId() });
+        PageProviderDefinition def = PageProviderHelper.getPageProviderDefinition(pageproviderName);
+        Map<String, String> namedParams = new HashMap<>();
+        namedParams.put("rootId",root.getId());
+        PageProvider<DocumentModel> pp = (PageProvider<DocumentModel>)PageProviderHelper.getPageProvider(session, def, namedParams,new Object[]{});
 
         do {
             List<DocumentModel> children = pp.getCurrentPage();
