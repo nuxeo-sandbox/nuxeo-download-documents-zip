@@ -37,6 +37,9 @@ As with any potentially long operation, it is recommended to use the [Automation
 ## Web UI contribs
 The package contains Web UI slot contributions to replace the default bulk download action with the one provided in this plugin.
 
+### Select All Support
+This plugin provides partial support for Select All (the default action doesn't). The download all action will be available if the number of results is less than the page provider page size. This is the only situation where Web UI can provide the complete list of document UUIDs to the server. Otherwise the select all feature relies on the server bulk action framework but there is no action implemented for bulk download. 
+
 # Support
 
 **These features are not part of the Nuxeo Production platform.**
