@@ -34,6 +34,8 @@ import org.nuxeo.ecm.platform.query.api.PageProvider;
 import org.nuxeo.ecm.platform.query.api.PageProviderDefinition;
 import org.nuxeo.runtime.api.Framework;
 
+import static org.nuxeo.ecm.collections.api.CollectionConstants.COLLECTION_FACET;
+
 /**
  *
  */
@@ -80,7 +82,7 @@ public class BulkDownloadZip {
             zipOut.setUseZip64(Zip64Mode.Always);
             docs.stream().forEach(doc -> {
                 try {
-                    if (doc.isFolder()) {
+                    if (hasChildren(doc)) {
                         zipFolder(zipOut, doc, "", pageprovider);
                     } else {
                         zipFile(zipOut, doc, null);
@@ -115,7 +117,7 @@ public class BulkDownloadZip {
         do {
             List<DocumentModel> children = pp.getCurrentPage();
             for (DocumentModel current : children) {
-                if (current.isFolder()) {
+                if (hasChildren(current)) {
                     zipFolder(zipOut, current, currentPath, pageproviderName);
                 } else {
                     zipFile(zipOut, current, currentPath);
@@ -148,6 +150,10 @@ public class BulkDownloadZip {
             IOUtils.copy(in, zipOut);
             zipOut.closeArchiveEntry();
         }
+    }
+
+    public boolean hasChildren(DocumentModel doc) {
+        return doc.isFolder() || doc.hasFacet(COLLECTION_FACET);
     }
 
 }
