@@ -1,5 +1,7 @@
 package org.nuxeo.labs.download.zip;
 
+import static org.nuxeo.ecm.collections.api.CollectionConstants.COLLECTION_FACET;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,8 +36,6 @@ import org.nuxeo.ecm.platform.query.api.PageProvider;
 import org.nuxeo.ecm.platform.query.api.PageProviderDefinition;
 import org.nuxeo.runtime.api.Framework;
 
-import static org.nuxeo.ecm.collections.api.CollectionConstants.COLLECTION_FACET;
-
 /**
  *
  */
@@ -69,18 +69,13 @@ public class BulkDownloadZip {
         long beginning = System.currentTimeMillis();
         try (ZipArchiveOutputStream zipOut = new ZipArchiveOutputStream(zipFile)) {
             switch (zipMethod) {
-            case "stored":
-                zipOut.setMethod(ZipArchiveOutputStream.STORED);
-                break;
-            case "deflated":
-                zipOut.setMethod(ZipArchiveOutputStream.DEFLATED);
-                break;
-            default:
-                throw new NuxeoException("Unknow ZIP method: " + zipMethod);
+                case "stored" -> zipOut.setMethod(ZipArchiveOutputStream.STORED);
+                case "deflated" -> zipOut.setMethod(ZipArchiveOutputStream.DEFLATED);
+                default -> throw new NuxeoException("Unknow ZIP method: " + zipMethod);
             }
 
             zipOut.setUseZip64(Zip64Mode.Always);
-            docs.stream().forEach(doc -> {
+            docs.forEach(doc -> {
                 try {
                     if (hasChildren(doc)) {
                         zipFolder(zipOut, doc, "", pageprovider);

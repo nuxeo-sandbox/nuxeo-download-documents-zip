@@ -19,6 +19,9 @@
 
 package org.nuxeo.labs.download.zip;
 
+import java.io.File;
+import java.io.Serializable;
+
 import org.nuxeo.ecm.automation.test.AutomationFeature;
 import org.nuxeo.ecm.core.api.Blob;
 import org.nuxeo.ecm.core.api.CoreSession;
@@ -26,9 +29,6 @@ import org.nuxeo.ecm.core.api.DocumentModel;
 import org.nuxeo.ecm.core.api.impl.blob.FileBlob;
 import org.nuxeo.ecm.core.test.annotations.RepositoryInit;
 import org.nuxeo.runtime.test.runner.Features;
-
-import java.io.File;
-import java.io.Serializable;
 
 @Features({ AutomationFeature.class })
 public class CustomRepoInit implements RepositoryInit {
