@@ -32,7 +32,7 @@ Parameters:
 | zipMethod    | the zip compression method, stored or deflated | string | false    | stored                  |
 | filename     | The filename of the resulting zip file         | string | false    |                         |
 
-As with any potentially long operation, it is recommended to use the [Automation Async adapter|https://jira.nuxeo.com/browse/NXP-26172]
+As with any potentially long operation, it is recommended to use the [Automation Async adapter](https://jira.nuxeo.com/browse/NXP-26172)
 
 ## Web UI contribs
 The package contains Web UI slot contributions to replace the default bulk download action with the one provided in this plugin.
