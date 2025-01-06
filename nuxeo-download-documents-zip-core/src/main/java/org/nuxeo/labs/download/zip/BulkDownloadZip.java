@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -140,7 +139,7 @@ public class BulkDownloadZip {
             entryPath = entryPath.substring(1);
         }
         try (InputStream in = blob.getStream()) {
-            ArchiveEntry entry = new ZipArchiveEntry(entryPath);
+            ZipArchiveEntry entry = new ZipArchiveEntry(entryPath);
             zipOut.putArchiveEntry(entry);
             IOUtils.copy(in, zipOut);
             zipOut.closeArchiveEntry();

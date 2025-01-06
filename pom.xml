@@ -3,18 +3,18 @@
   <parent>
     <groupId>org.nuxeo</groupId>
     <artifactId>nuxeo-parent</artifactId>
-    <version>2023.0</version>
+    <version>2025.0.119</version>
   </parent>
   <groupId>org.nuxeo.labs.download.zip</groupId>
   <artifactId>nuxeo-download-documents-zip-parent</artifactId>
-  <version>2023.1.0-SNAPSHOT</version>
+  <version>2025.0.0-SNAPSHOT</version>
   <name>Nuxeo download documents zip parent</name>
   <description/>
   <packaging>pom</packaging>
   <properties>
     <!-- Skip Nuxeo enforcer rules by default -->
     <nuxeo.skip.enforcer>true</nuxeo.skip.enforcer>
-    <nuxeo.target.version>2023.*</nuxeo.target.version>
+    <nuxeo.target.version>2025.*</nuxeo.target.version>
     <pushReleaseChanges>false</pushReleaseChanges>
   </properties>
   <modules>
